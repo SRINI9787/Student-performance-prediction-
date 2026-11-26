@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10172a">
+    <title>Student Performance Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="page-shell">
+        <nav class="topbar" aria-label="Main navigation">
+            <a class="brand" href="/">
+                <span class="brand-mark" aria-hidden="true">S</span>
+                <span>Student<span class="brand-light">Insight</span></span>
+            </a>
+            <span class="model-status">
+                <span class="status-dot {{ 'ready' if model_ready else 'not-ready' }}"></span>
+                {{ 'MODEL READY' if model_ready else 'MODEL NOT TRAINED' }}
+            </span>
+        </nav>
+
+        <section class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow"><span></span> A clearer path to academic success</p>
+                <h1>Small insights.<br><span>Big futures.</span></h1>
+                <p class="hero-description">
+                    Explore how attendance, coursework, and study habits shape a
+                    student's predicted academic outcome.
+                </p>
+                <div class="hero-note">
+                    <span class="note-icon" aria-hidden="true">✦</span>
+                    <p>Predictions are guidance, not a guarantee. Every student's story is unique.</p>
+                </div>
+            </div>
+
+            <section class="prediction-card" aria-labelledby="form-title">
+                <div class="card-heading">
+                    <div>
+                        <p class="card-kicker">STUDENT PROFILE</p>
+                        <h2 id="form-title">Enter the details</h2>
+                    </div>
+                    <span class="card-icon" aria-hidden="true">↗</span>
+                </div>
+                <p class="card-description">Add the latest numbers to see a prediction.</p>
+
+                {% if error %}
+                <div class="message error-message" role="alert">{{ error }}</div>
+                {% endif %}
+
+                {% if prediction %}
+                <div class="message result-message {{ 'pass-result' if prediction == 'Pass' else 'fail-result' }}" role="status" aria-live="polite">
+                    <span class="result-label">PREDICTED OUTCOME</span>
+                    <strong>{{ prediction }}</strong>
+                    <span>{{ 'Keep up the great work!' if prediction == 'Pass' else 'A little extra support could make a difference.' }}</span>
+                </div>
+                {% endif %}
+
+                <form method="post" action="/">
+                    <div class="field-grid">
+                        <label class="field" for="attendance">
+                            <span>Attendance</span>
+                            <span class="input-wrap">
+                                <input id="attendance" name="attendance" type="number" min="0" max="100" step="any" placeholder="e.g. 85" value="{{ values.get('attendance', '') }}" required>
+                                <span class="unit">%</span>
+                            </span>
+                            <small>Percentage of classes attended</small>
+                        </label>
+                        <label class="field" for="internal_marks">
+                            <span>Internal marks</span>
+                            <span class="input-wrap">
+                                <input id="internal_marks" name="internal_marks" type="number" min="0" max="100" step="any" placeholder="e.g. 72" value="{{ values.get('internal_marks', '') }}" required>
+                                <span class="unit">/ 100</span>
+                            </span>
+                            <small>Current internal assessment score</small>
+                        </label>
+                        <label class="field" for="assignment_marks">
+                            <span>Assignment marks</span>
+                            <span class="input-wrap">
+                                <input id="assignment_marks" name="assignment_marks" type="number" min="0" max="100" step="any" placeholder="e.g. 80" value="{{ values.get('assignment_marks', '') }}" required>
+                                <span class="unit">/ 100</span>
+                            </span>
+                            <small>Average assignment score</small>
+                        </label>
+                        <label class="field" for="study_hours">
+                            <span>Study hours per day</span>
+                            <span class="input-wrap">
+                                <input id="study_hours" name="study_hours" type="number" min="0" max="24" step="any" placeholder="e.g. 3.5" value="{{ values.get('study_hours', '') }}" required>
+                                <span class="unit">hrs</span>
+                            </span>
+                            <small>Typical focused study time each day</small>
+                        </label>
+                    </div>
+                    <button class="submit-button" type="submit">
+                        Predict student outcome <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+                <p class="privacy-note"><span aria-hidden="true">◈</span> Your entries are used only for this prediction.</p>
+            </section>
+        </section>
+
+        <footer class="footer">
+            <span>STUDENT PERFORMANCE PREDICTION</span>
+            <span>Powered by a Random Forest model</span>
+        </footer>
+    </main>
+</body>
+</html>
